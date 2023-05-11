@@ -22,19 +22,15 @@ class Piece:
 
 
 class Card:
-    def __init__(self, name, color, move_tiles, list_mode=False): 
+    def __init__(self, name, color, move_tiles): 
         self.name = name
         self.color = color # -1=gray, 0=blue, 1=red
         self.player = 0
-        if not list_mode: #moves is a 2d list, where each 1 is a place they can go to, relative to the position of the piece. Initialized as pointing 'down' (0's direction)
-            self.moves = []
-            for y in range(len(move_tiles)):
-                for x in range(len(move_tiles[0])):
-                    if move_tiles[y][x]:
-                        self.moves.append((y - 2, x - 2)) #the -2 is to set (2, 2) as the midpoint (where the piece actually is)
-        #moves is a list of moves of type (x, y), relative to the position of the piece. Initialized as pointing 'down' (0's direction)
-        else:
-            self.moves = move_tiles
+        self.moves = []
+        for y in range(len(move_tiles)):
+            for x in range(len(move_tiles[0])):
+                if move_tiles[y][x]:
+                    self.moves.append((y - 2, x - 2)) #the -2 is to set (2, 2) as the midpoint (where the piece actually is)
 
     def flip(self):
         self.moves = [(-y, -x) for (y, x) in self.moves]
@@ -87,6 +83,9 @@ class Board:
     
     def add_card(self, card):
         self.cards.add(card)
+    
+    def get_card(self, player, index):
+        return self.players[player][index]
 
     def used_card(self, player, used_card):
         self.players[player][self.players.index(used_card)] = self.next_card
@@ -95,9 +94,6 @@ class Board:
 
     def card_move(self, card, move):
         return move in card
-    
-    def move_item(self, piece, location):
-        pass
 
     def legal_spot(y, x):
         return (0 <= y <= 4) and (0 <= x <= 4)
@@ -180,11 +176,35 @@ if __name__ == '__main__':
 
     player = 0
     while player == 0:
+        cont = True
         board.print_status()
+
+        repeat = True
+        while repeat:
+            x = int(input("Choose x [0 is left]: "))
+            y = int(input("Choose y [0 is top]: "))
+            piece = board.get_tile(y, x)
+            if piece is None or piece.player != player:
+                print("Invalid location, try again")
+            else:
+                move_sel = int(input("Choose a move [0 or 1]: "))
+                if move_sel in [0, 1]:
+                    move_choice = board.get_card(player, move_sel)
+                    print(f"You chose {move_choice.name}")
+
+                    repeat = False
+            
+
+        
+
+
+
+        
         
 
 
 
 
 
-        player = 1 - player
+        if cont:
+            player = 1 - player
