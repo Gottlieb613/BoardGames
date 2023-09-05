@@ -31,16 +31,34 @@ class Card:
             for x in range(len(move_tiles[0])):
                 if move_tiles[y][x]:
                     self.moves.append((y - 2, x - 2)) #the -2 is to set (2, 2) as the midpoint (where the piece actually is)
+        self.move_tiles = move_tiles
 
     def flip(self):
         self.moves = [(-y, -x) for (y, x) in self.moves]
         self.change_player()
+
+        self.move_tiles.reverse()
+        for row in self.move_tiles:
+            row.reverse()
     
     def change_player(self):
         self.player = 1 - self.player
     
     def update_location(self, new_y, new_x):
         self.location = (new_y, new_x)
+
+    def print_card(self):
+        for y in range(5):
+            for x in range(5):
+                if x == 2 and y == 2:
+                    print('X',end='')
+                else:
+                    tile = self.move_tiles[y][x]
+                    if tile:
+                        print('■',end='')
+                    else:
+                        print('.', end='')
+            print()
 
 
 class Board:
@@ -191,6 +209,8 @@ if __name__ == '__main__':
                 if move_sel in [0, 1]:
                     move_choice = board.get_card(player, move_sel)
                     print(f"You chose {move_choice.name}")
+                    move_choice.print_card()
+
 
                     repeat = False
             
