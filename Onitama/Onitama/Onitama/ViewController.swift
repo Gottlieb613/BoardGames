@@ -8,8 +8,7 @@
 
 //NEXT TODO:
 // 'Restart' button
-// Move to other git.
-//
+// Add other cards! (have to make their pixelart too)
 
 import UIKit
 
