@@ -153,7 +153,14 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     func drawCell(cell: BoardCell, boardItem: BoardItem, row: Int, col: Int) {
         cell.image.tintColor = boardItem.tileColor()
-        cell.image.image = boardItem.sensei ? UIImage(systemName: "circle.inset.filled") : UIImage(systemName: "circle.fill")
+        
+        if boardItem.emptyTile() {
+            cell.image.image = UIImage(systemName: "circle.fill")
+        } else {
+            let imageName: String = "\(boardItem.p0Tile() ? "Up" : "Down")\(boardItem.senseiTile() ? "Sensei" : "Pawn")"
+            cell.image.image = UIImage(named: imageName)
+        }
+        
         
         if (row == selectedItemRow && col == selectedItemCol) {
             cell.backgroundColor = .systemRed
@@ -224,24 +231,24 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         let ac = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
         ac.addAction(UIAlertAction(title: "Reset", style: .default, handler: {
             [self] (_) in
+            resetCards()
             resetBoard()
             self.resetCells()
-            resetCards()
         }))
         self.present(ac, animated: true)
     }
     
     func resetCells() {
+        selectedItemRow = -1
+        selectedItemCol = -1
         for row in 0...4 {
             for col in 0...4 {
                 let boardItem = board[row][col]
                 if let cell = collectionView.cellForItem(at: boardItem.indexPath) as? BoardCell {
-                    drawCell(cell: cell, boardItem: boardItem, row: -1, col: -1)
+                    drawCell(cell: cell, boardItem: boardItem, row: row, col: col)
                 }
             }
         }
-        selectedItemRow = -1
-        selectedItemCol = -1
     }
     
     

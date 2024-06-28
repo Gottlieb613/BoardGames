@@ -9,8 +9,8 @@ import Foundation
 import UIKit
 
 enum Tile {
-    case Player0
-    case Player1
+    case Player0 //going up
+    case Player1 //going down
     case Empty
 }
 
