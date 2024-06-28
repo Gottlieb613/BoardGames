@@ -44,9 +44,22 @@ var cardFrog = Card(description: "Frog", moves: [(1,1), (-1,-1), (0, -2)])
 var cardRabbit = Card(description: "Rabbit", moves: [(1,-1), (-1,1), (0, 2)])
 var cardCrab = Card(description: "Crab", moves: [(0,2), (0,-2), (-1, 0)])
 var cardElephant = Card(description: "Elephant", moves: [(0, 1), (0, -1), (-1, -1), (-1, 1)])
+var cardBoar = Card(description: "Boar", moves: [(0, 1), (0, -1), (-1, 0)])
+var cardCobra = Card(description: "Cobra", moves: [(0, -1), (1, 1), (-1, 1)])
+var cardCrane = Card(description: "Crane", moves: [(1, 1), (1, -1), (-1, 0)])
+var cardEel = Card(description: "Eel", moves: [(0, 1), (1, -1), (-1, -1)])
+var cardGoose = Card(description: "Goose", moves: [(0, 1), (0, -1), (1, 1), (-1, -1)])
+var cardHorse = Card(description: "Horse", moves: [(0, -1), (1, 0), (-1, 0)])
+var cardMantis = Card(description: "Mantis", moves: [(1, 0), (-1, -1), (-1, 1)])
+var cardMonkey = Card(description: "Monkey", moves: [(-1, 1), (1, -1), (1, 1), (-1, -1)])
+var cardOx = Card(description: "Ox", moves: [(-1, 0), (1, 0), (0, 1)])
+var cardRooster = Card(description: "Rooster", moves: [(0, -1), (1, -1), (0, 1), (-1, 1)])
 
 
-var fullCardSet = [cardTiger, cardDragon, cardFrog, cardRabbit, cardCrab, cardElephant]
+
+var fullCardSet = [cardTiger, cardDragon, cardFrog, cardRabbit, cardCrab, cardElephant,
+                   cardBoar, cardCobra, cardCrane, cardEel, cardGoose, cardHorse,
+                   cardMantis, cardMonkey, cardOx, cardRooster]
 
 //Example: [0Tiger_^, 1Dragon_^, 2Rabbit_^[MIDDLE], 3Crab_v, 4Elephant_v]
 func makeCardList() -> (Card, [Card]) {
