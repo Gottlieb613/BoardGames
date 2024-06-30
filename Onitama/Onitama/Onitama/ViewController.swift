@@ -8,7 +8,6 @@
 
 //NEXT TODO:
 // 'Restart' button
-// Add other cards! (have to make their pixelart too)
 
 import UIKit
 
@@ -265,11 +264,11 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         if (p0Turn()) {
             bottomNext.image = UIImage(named: "\(cardList[2])")
-            topNext.image = UIImage(systemName: ".rectangle")
+            topNext.image = UIImage(systemName: "rectangle")
             topNext.tintColor = .black
         } else  {
             topNext.image = UIImage(named: "\(cardList[2])")
-            bottomNext.image = UIImage(systemName: ".rectangle")
+            bottomNext.image = UIImage(systemName: "rectangle")
             bottomNext.tintColor = .black
             topNext.transform = CGAffineTransform(rotationAngle: .pi)
         }
@@ -314,6 +313,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     func resetCards() {
+        selectedCardNum = p0Turn() ? 0 : 4
         legalTiles = []
         (selectedCard, cardList) = makeCardList()
         refreshImages()

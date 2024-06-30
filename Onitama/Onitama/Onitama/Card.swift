@@ -63,12 +63,18 @@ var fullCardSet = [cardTiger, cardDragon, cardFrog, cardRabbit, cardCrab, cardEl
 
 //Example: [0Tiger_^, 1Dragon_^, 2Rabbit_^[MIDDLE], 3Crab_v, 4Elephant_v]
 func makeCardList() -> (Card, [Card]) {
+    
     var fiveCards: [Card] = Array(fullCardSet.shuffled().prefix(5))
     fiveCards[3].toggleCardOrientation()
     fiveCards[4].toggleCardOrientation()
     
-    print("Cards: \(fiveCards)")
-    return (fiveCards[0], fiveCards)
+    if !p0Turn() { //if starting with p1 (black), then make sure 'next' card starts flipped
+        fiveCards[2].toggleCardOrientation()
+    }
+    
+    printCardsOrientation(cardList: fiveCards)
+    
+    return (p0Turn() ? fiveCards[0] : fiveCards[4], fiveCards)
 }
 
 func swapCards(cardList: inout [Card], selection: Int) {
@@ -85,5 +91,14 @@ func swapCards(cardList: inout [Card], selection: Int) {
             cardList[selection] = midCard
         default: print("ERROR selection not in [0,1,3,4]")
     }
-    print("CardList now: \(cardList)")
+    printCardsOrientation(cardList: cardList)
+}
+
+
+func printCardsOrientation(cardList: [Card]) {
+    print("CardList now: ", terminator:"")
+    for card in cardList {
+        print("\(card)-\(card.orientation ?"v":"^")", terminator:" |")
+    }
+    print()
 }
