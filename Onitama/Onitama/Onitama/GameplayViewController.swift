@@ -10,8 +10,10 @@
 // 'Restart' button
 
 import UIKit
+import SwiftUI
+import Combine
 
-class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class GameplayViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var colorBar: UIView!
     @IBOutlet weak var card0: UIImageView!
@@ -23,7 +25,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     var p0Score = 0
     var p1Score = 0
-    
     var selectedItem: BoardItem = BoardItem(indexPath: IndexPath.init(item: 5, section: 5), tile: Tile.Empty, sensei: false)
     var selectedItemRow = -1
     var selectedItemCol = -1
@@ -31,33 +32,57 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     var selectedCardNum = 0
     var legalTiles: [(Int, Int)] = []
     
-//    @IBOutlet weak var card0: UIButton!
-//    @IBOutlet weak var card1: UIButton!
-
+    var gameMode = "2 Players"
+    
+    private var cancellables = Set<AnyCancellable>()
+    let sharedSettings = SharedSettings.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
         resetBoard()
         setCellWidthHeight()
         
-        refreshImages()
-        
-        card0.isUserInteractionEnabled = true
-        card1.isUserInteractionEnabled = true
-        card3.isUserInteractionEnabled = true
-        card4.isUserInteractionEnabled = true
-        
-        let card0TapGesture = UITapGestureRecognizer(target: self, action: #selector(card0Tapped))
-        let card1TapGesture = UITapGestureRecognizer(target: self, action: #selector(card1Tapped))
-        let card3TapGesture = UITapGestureRecognizer(target: self, action: #selector(card3Tapped))
-        let card4TapGesture = UITapGestureRecognizer(target: self, action: #selector(card4Tapped))
-        card0.addGestureRecognizer(card0TapGesture)
-        card1.addGestureRecognizer(card1TapGesture)
-        card3.addGestureRecognizer(card3TapGesture)
-        card4.addGestureRecognizer(card4TapGesture)
-        
+        //Cards
+        refreshCardImages()
+        setupCardTouch()
         highlightSelectedCard()
+        
+        let swipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe))
+        swipeGestureRecognizer.direction = .right
+        view.addGestureRecognizer(swipeGestureRecognizer)
+        
+        // Observe game mode changes
+        sharedSettings.$selectedGameMode
+            .sink { [weak self] selectedGameMode in
+                // Update UI or perform actions based on selectedGameMode
+                self?.updateForSelectedGameMode(selectedGameMode)
+            }
+            .store(in: &cancellables) //
     }
+    
+    @objc func handleSwipe() {
+        print("Swipe->")
+        let settingsView = SettingsView()
+        let hostingController = UIHostingController(rootView: settingsView)
+        
+        let transition = CATransition()
+        transition.duration = 0.3
+        transition.type = CATransitionType.push
+        transition.subtype = CATransitionSubtype.fromLeft
+        navigationController?.view.layer.add(transition, forKey: kCATransition)
+        
+        navigationController?.pushViewController(hostingController, animated: true)
+    }
+    
+    func updateForSelectedGameMode(_ selectedGameMode: String) {
+        print("Selected game mode: \(selectedGameMode)")
+        resetEverything()
+        p0Score = 0
+        p1Score = 0
+        
+        gameMode = selectedGameMode
+    }
+    
     
     func setCellWidthHeight() {
         let width = collectionView.frame.size.width / 6
@@ -86,75 +111,84 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ cv: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let row = indexPath.section
-        let col = indexPath.item
-        let boardItem = board[row][col]
-        
-        if (boardItem.tile == currentTurnTile()) {
-            print("Piece at r\(row) c\(col)")
-            selectedItem = boardItem
-            selectedItemRow = row
-            selectedItemCol = col
+        if gameMode == "2 Players" {
+            let row = indexPath.section
+            let col = indexPath.item
+            let boardItem = board[row][col]
             
-            setLegalTiles()
-            
-        } else {
-            if let cell = collectionView.cellForItem(at: boardItem.indexPath) as? BoardCell { // selected spot
-                if legalTiles.contains(where: { $0 == (row, col) }) {
-                    //--move is legal
-                    print("Place: r\(row) c\(col)")
-                    
-                    // Check win
-                    if board[row][col].senseiTile() ||
-                        (selectedItem.senseiTile() && col == 2 && ((row == 0 && selectedItem.p0Tile()) || (row == 4 && selectedItem.p1Tile())) ) {
+            if (boardItem.tile == currentTurnTile()) {
+                print("Piece at r\(row) c\(col)")
+                selectedItem = boardItem
+                selectedItemRow = row
+                selectedItemCol = col
+                
+                setLegalTiles()
+                
+            } else {
+                if let cell = collectionView.cellForItem(at: boardItem.indexPath) as? BoardCell { // selected spot
+                    if legalTiles.contains(where: { $0 == (row, col) }) {
+                        //--move is legal
+                        print("Place: r\(row) c\(col)")
                         
-                        //still want to move piece so looks good
-                        placePiece(cell: cell, piece: selectedItem, origRow: selectedItemRow, origCol: selectedItemCol, newRow: row, newCol: col)
-        
-                        let oldCell = collectionView.cellForItem(at: selectedItem.indexPath) as! BoardCell
-                        
-                        oldCell.image.tintColor = UIColor.white
-                        oldCell.image.image = UIImage(systemName: "circle.fill")
-                        
-                        if p0Turn() {
-                            p0Score += 1
+                        // Check win
+                        if board[row][col].senseiTile() ||
+                            (selectedItem.senseiTile() && col == 2 && ((row == 0 && selectedItem.p0Tile()) || (row == 4 && selectedItem.p1Tile())) ) {
+                            
+                            //still want to move piece so looks good
+                            placePiece(cell: cell, piece: selectedItem, origRow: selectedItemRow, origCol: selectedItemCol, newRow: row, newCol: col)
+                            
+                            let oldCell = collectionView.cellForItem(at: selectedItem.indexPath) as! BoardCell
+                            
+                            oldCell.image.tintColor = UIColor.white
+                            oldCell.image.image = UIImage(systemName: "circle.fill")
+                            
+                            if p0Turn() {
+                                p0Score += 1
+                            } else {
+                                p1Score += 1
+                            }
+                            
+                            resultAlert(currentTurnVictoryMessage())
+                            
+                            // No win
                         } else {
-                            p1Score += 1
+                            placePiece(cell: cell, piece: selectedItem, origRow: selectedItemRow, origCol: selectedItemCol, newRow: row, newCol: col)
+                            
+                            let oldCell = collectionView.cellForItem(at: selectedItem.indexPath) as! BoardCell
+                            
+                            oldCell.image.tintColor = UIColor.white
+                            oldCell.image.image = UIImage(systemName: "circle.fill")
+                            
+                            swapCards(cardList: &cardList, selection: selectedCardNum)
+                            toggleTurn(colorBar)
+                            
+                            selectedCardNum = p0Turn() ? 0 : 4
+                            selectedCard = cardList[selectedCardNum]
+                            
+                            selectedItemRow = -1
+                            selectedItemCol = -1
+                            legalTiles = []
                         }
-                        
-                        resultAlert(currentTurnVictoryMessage())
-                        
-                    // No win
-                    } else {
-                        placePiece(cell: cell, piece: selectedItem, origRow: selectedItemRow, origCol: selectedItemCol, newRow: row, newCol: col)
-        
-                        let oldCell = collectionView.cellForItem(at: selectedItem.indexPath) as! BoardCell
-                        
-                        oldCell.image.tintColor = UIColor.white
-                        oldCell.image.image = UIImage(systemName: "circle.fill")
-                        
-                        swapCards(cardList: &cardList, selection: selectedCardNum)
-                        toggleTurn(colorBar)
-                        
-                        selectedCardNum = p0Turn() ? 0 : 4
-                        selectedCard = cardList[selectedCardNum]
-                        
-                        selectedItemRow = -1
-                        selectedItemCol = -1
-                        legalTiles = []
                     }
                 }
             }
+            collectionView.reloadData()
+            refreshCardImages()
+            
+        } else if gameMode == "Bot" {
+            
         }
-        collectionView.reloadData()
-        refreshImages()
     }
     
     func drawCell(cell: BoardCell, boardItem: BoardItem, row: Int, col: Int) {
         cell.image.tintColor = boardItem.tileColor()
         
         if boardItem.emptyTile() {
-            cell.image.image = UIImage(systemName: "circle.fill")
+            if col == 2 && (row == 0 || row == 4) {
+                cell.image.image = UIImage(systemName: "circle.inset.filled")
+            } else {
+                cell.image.image = UIImage(systemName: "circle.fill")
+            }
         } else {
             let imageName: String = "\(boardItem.p0Tile() ? "Up" : "Down")\(boardItem.senseiTile() ? "Sensei" : "Pawn")"
             cell.image.image = UIImage(named: imageName)
@@ -174,6 +208,21 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
   // ---- CARD BUTTONS -----
+    func setupCardTouch() {
+        card0.isUserInteractionEnabled = true
+        card1.isUserInteractionEnabled = true
+        card3.isUserInteractionEnabled = true
+        card4.isUserInteractionEnabled = true
+        
+        let card0TapGesture = UITapGestureRecognizer(target: self, action: #selector(card0Tapped))
+        let card1TapGesture = UITapGestureRecognizer(target: self, action: #selector(card1Tapped))
+        let card3TapGesture = UITapGestureRecognizer(target: self, action: #selector(card3Tapped))
+        let card4TapGesture = UITapGestureRecognizer(target: self, action: #selector(card4Tapped))
+        card0.addGestureRecognizer(card0TapGesture)
+        card1.addGestureRecognizer(card1TapGesture)
+        card3.addGestureRecognizer(card3TapGesture)
+        card4.addGestureRecognizer(card4TapGesture)
+    }
     
     @objc func card0Tapped() {
         // Handle tap action here
@@ -217,7 +266,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             selectedCard = cardList[4]
             selectedCardNum = 4
             print("card4: \(selectedCard)")
-            refreshImages()
         }
         highlightSelectedCard()
         setLegalTiles()
@@ -230,11 +278,15 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         let ac = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
         ac.addAction(UIAlertAction(title: "Reset", style: .default, handler: {
             [self] (_) in
-            resetCards()
-            resetBoard()
-            self.resetCells()
+            resetEverything()
         }))
         self.present(ac, animated: true)
+    }
+    
+    func resetEverything() {
+        resetCards()
+        resetBoard()
+        self.resetCells()
     }
     
     func resetCells() {
@@ -251,7 +303,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     
-    func refreshImages() {
+    func refreshCardImages() {
 //        card0.setImage(UIImage(named: "\(cardList[0])"), for: .normal)
 //        card1.setImage(UIImage(named: "\(cardList[1])"), for: .normal)
         
@@ -316,7 +368,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         selectedCardNum = p0Turn() ? 0 : 4
         legalTiles = []
         (selectedCard, cardList) = makeCardList()
-        refreshImages()
+        refreshCardImages()
     }
 
 }

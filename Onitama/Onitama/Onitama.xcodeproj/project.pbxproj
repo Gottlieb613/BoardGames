@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		961CB9132C2F515100619D28 /* PlayerSelect.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 961CB9122C2F515100619D28 /* PlayerSelect.storyboard */; };
-		961CB9152C2F60D800619D28 /* PlayerSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961CB9142C2F60D800619D28 /* PlayerSelectView.swift */; };
+		961CB9152C2F60D800619D28 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961CB9142C2F60D800619D28 /* SettingsView.swift */; };
+		961CB91B2C32021900619D28 /* SettingsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961CB91A2C32021900619D28 /* SettingsData.swift */; };
 		96C6ECC32C2CB3F1001CC753 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C6ECC22C2CB3F1001CC753 /* AppDelegate.swift */; };
 		96C6ECC52C2CB3F1001CC753 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C6ECC42C2CB3F1001CC753 /* SceneDelegate.swift */; };
-		96C6ECC72C2CB3F1001CC753 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C6ECC62C2CB3F1001CC753 /* ViewController.swift */; };
+		96C6ECC72C2CB3F1001CC753 /* GameplayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C6ECC62C2CB3F1001CC753 /* GameplayViewController.swift */; };
 		96C6ECCA2C2CB3F1001CC753 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 96C6ECC92C2CB3F1001CC753 /* Base */; };
 		96C6ECCC2C2CB3F3001CC753 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96C6ECCB2C2CB3F3001CC753 /* Assets.xcassets */; };
 		96C6ECCF2C2CB3F3001CC753 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 96C6ECCE2C2CB3F3001CC753 /* Base */; };
@@ -23,12 +23,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		961CB9122C2F515100619D28 /* PlayerSelect.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = PlayerSelect.storyboard; sourceTree = "<group>"; };
-		961CB9142C2F60D800619D28 /* PlayerSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSelectView.swift; sourceTree = "<group>"; };
+		961CB9142C2F60D800619D28 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		961CB91A2C32021900619D28 /* SettingsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsData.swift; sourceTree = "<group>"; };
 		96C6ECBF2C2CB3F1001CC753 /* Onitama.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Onitama.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		96C6ECC22C2CB3F1001CC753 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		96C6ECC42C2CB3F1001CC753 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		96C6ECC62C2CB3F1001CC753 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		96C6ECC62C2CB3F1001CC753 /* GameplayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameplayViewController.swift; sourceTree = "<group>"; };
 		96C6ECC92C2CB3F1001CC753 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		96C6ECCB2C2CB3F3001CC753 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		96C6ECCE2C2CB3F3001CC753 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -72,18 +72,18 @@
 			children = (
 				96C6ECC22C2CB3F1001CC753 /* AppDelegate.swift */,
 				96C6ECC42C2CB3F1001CC753 /* SceneDelegate.swift */,
-				96C6ECC62C2CB3F1001CC753 /* ViewController.swift */,
+				96C6ECC62C2CB3F1001CC753 /* GameplayViewController.swift */,
 				96C6ECC82C2CB3F1001CC753 /* Main.storyboard */,
 				96C6ECCB2C2CB3F3001CC753 /* Assets.xcassets */,
 				96C6ECCD2C2CB3F3001CC753 /* LaunchScreen.storyboard */,
 				96C6ECD62C2CB442001CC753 /* BoardItem.swift */,
 				96C6ECD82C2CB452001CC753 /* Card.swift */,
-				961CB9122C2F515100619D28 /* PlayerSelect.storyboard */,
 				96C6ECE02C2CB4D5001CC753 /* Turn.swift */,
 				96C6ECDA2C2CB45E001CC753 /* Board.swift */,
 				96C6ECDC2C2CB46F001CC753 /* BoardCell.swift */,
 				96C6ECD02C2CB3F3001CC753 /* Info.plist */,
-				961CB9142C2F60D800619D28 /* PlayerSelectView.swift */,
+				961CB9142C2F60D800619D28 /* SettingsView.swift */,
+				961CB91A2C32021900619D28 /* SettingsData.swift */,
 			);
 			path = Onitama;
 			sourceTree = "<group>";
@@ -149,7 +149,6 @@
 				96C6ECCC2C2CB3F3001CC753 /* Assets.xcassets in Resources */,
 				96C6ECCF2C2CB3F3001CC753 /* Base in Resources */,
 				96C6ECCA2C2CB3F1001CC753 /* Base in Resources */,
-				961CB9132C2F515100619D28 /* PlayerSelect.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,14 +159,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96C6ECC72C2CB3F1001CC753 /* ViewController.swift in Sources */,
+				96C6ECC72C2CB3F1001CC753 /* GameplayViewController.swift in Sources */,
 				96C6ECD72C2CB442001CC753 /* BoardItem.swift in Sources */,
 				96C6ECDB2C2CB45E001CC753 /* Board.swift in Sources */,
 				96C6ECD92C2CB452001CC753 /* Card.swift in Sources */,
 				96C6ECC32C2CB3F1001CC753 /* AppDelegate.swift in Sources */,
+				961CB91B2C32021900619D28 /* SettingsData.swift in Sources */,
 				96C6ECDD2C2CB46F001CC753 /* BoardCell.swift in Sources */,
 				96C6ECE12C2CB4D5001CC753 /* Turn.swift in Sources */,
-				961CB9152C2F60D800619D28 /* PlayerSelectView.swift in Sources */,
+				961CB9152C2F60D800619D28 /* SettingsView.swift in Sources */,
 				96C6ECC52C2CB3F1001CC753 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
