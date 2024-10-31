@@ -1,9 +1,9 @@
 import pygame
 import random
 
-CELL_SIZE = 5
-GRID_WIDTH = 100
-GRID_HEIGHT = 100
+CELL_SIZE = 9
+GRID_WIDTH = 75
+GRID_HEIGHT = 75
 SCREEN_WIDTH = GRID_WIDTH * CELL_SIZE
 SCREEN_HEIGHT = GRID_HEIGHT * CELL_SIZE + 50
 
@@ -12,7 +12,7 @@ class Board:
     def __init__(self, r, c):
         self.r = r
         self.c = c
-        self.board_original = [[0 if random.random() < .9 else 1 for _ in range(c)] for _ in range(r)]
+        self.board_original = [[False for _ in range(c)] for _ in range(r)]
         self.board = self.board_original
 
         self.gens = 0
@@ -20,6 +20,17 @@ class Board:
 
     def toggle_running(self):
         self.running = not self.running
+
+    def get_cell_state(self, row, col):
+        return self.board[row][col]
+    
+    def toggle_cell(self, row, col):
+        if 0 <= row < self.r and 0 <= col < self.c:
+            self.board[row][col] = 1 - self.board[row][col]
+    
+    def cell_set(self, state, row, col):
+        if 0 <= row < self.r and 0 <= col < self.c:
+            self.board[row][col] = state
     
     def reset(self):
         self.board = self.board_original
@@ -44,16 +55,16 @@ class Board:
         ])
 
     def next_state(state, num_neighbors):
-        if state == 1:
+        if state:
             if num_neighbors < 2:
-                return 0
+                return False
             if num_neighbors > 3:
-                return 0
-            return 1
+                return False
+            return True
         return num_neighbors == 3
     
     def update(self):
-        next_board = [[0 for _ in range(self.c)] for _ in range(self.r)]
+        next_board = [[False for _ in range(self.c)] for _ in range(self.r)]
         for row in range(self.r):
             for col in range(self.c):
                 next_board[row][col] = Board.next_state(
@@ -82,6 +93,9 @@ if __name__ == "__main__":
 
     clock = pygame.time.Clock()
     running = True
+    dragging = False
+    dragging_on = True
+
     while running:
         screen.fill(WHITE)
         button_text = font.render("Stop" if board.running else "Start", True, WHITE)
@@ -109,13 +123,33 @@ if __name__ == "__main__":
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:  # Left mouse button
+                    dragging = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos):
                     board.toggle_running()
                     button_text = font.render("Stop" if board.running else "Start", True, WHITE)
+                elif event.pos[1] < GRID_HEIGHT * CELL_SIZE: #on board
+                    dragging = True
+                    row = event.pos[1] // CELL_SIZE
+                    col = event.pos[0] // CELL_SIZE
+                    dragging_on = not board.get_cell_state(row, col)
+                    board.cell_set(dragging_on, row, col)
+            elif event.type == pygame.MOUSEMOTION:
+                if dragging:
+                    if event.pos[1] < GRID_HEIGHT * CELL_SIZE:  # Only process movement within the grid
+                        col = event.pos[0] // CELL_SIZE
+                        row = event.pos[1] // CELL_SIZE
+                        board.cell_set(dragging_on, row, col)
+
+                    
 
         pygame.display.flip()
-        clock.tick(10)  # Update 10 frames per second
+        if running:
+            clock.tick(10) 
+        else:
+            clock.tick(100)
 
     pygame.quit()
 
